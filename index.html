@@ -462,6 +462,47 @@
     .btn-location:hover { background: #f7e6d4; }
     #map { width: 100%; height: 260px; border-radius: 12px; display: none; }
 
+    /* Gym List */
+    .gym-list { display: none; margin-top: 14px; }
+    .gym-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .gym-item:last-child { border-bottom: none; }
+    .gym-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+    .gym-meta {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-bottom: 4px;
+    }
+    .gym-type {
+      font-size: 12px;
+      background: var(--primary-bg);
+      color: var(--primary);
+      padding: 2px 10px;
+      border-radius: 100px;
+      font-weight: 600;
+    }
+    .gym-dist {
+      font-size: 12px;
+      color: var(--text-soft);
+      font-weight: 500;
+    }
+    .gym-hours {
+      font-size: 12px;
+      color: var(--text-soft);
+    }
+
     /* Product CTA */
     .product-cta {
       background: linear-gradient(135deg, #fff9f4, #fdf5ed);
@@ -794,10 +835,11 @@
         </div>
       </div>
       <div id="gymPlaceholder" class="gym-placeholder">
-        <p>📍 Allow location access to discover fitness venues within 2km</p>
+        <p>📍 Allow location access to discover fitness venues within 3 miles</p>
         <button class="btn-location" onclick="requestLocation()">📍 Share My Location</button>
       </div>
       <div id="map"></div>
+      <div id="gymList" class="gym-list"></div>
     </div>
 
     <!-- Product CTA -->
@@ -958,7 +1000,7 @@ function renderFoodRecs(goal) {
 async function sendEmail(email, data) {
   if (CONFIG.emailjs_public_key === 'YOUR_PUBLIC_KEY') {
     showEmailBanner(email);
-    showToast('📧 EmailJS 연결 후 실제 발송됩니다');
+    showToast('📬 EmailJS 연결 후 실제 발송됩니다');
     return;
   }
   const btn = document.getElementById('calcBtn');
@@ -1025,8 +1067,10 @@ window.initMap = function () {
   document.getElementById('gymPlaceholder').style.display = 'none';
   const mapEl = document.getElementById('map');
   mapEl.style.display = 'block';
+  const gymList = document.getElementById('gymList');
+
   const map = new google.maps.Map(mapEl, {
-    center: { lat, lng }, zoom: 14,
+    center: { lat, lng }, zoom: 13,
     styles: [
       { elementType:'geometry',           stylers:[{color:'#f5f0eb'}] },
       { elementType:'labels.text.fill',   stylers:[{color:'#6b5c54'}] },
@@ -1034,16 +1078,101 @@ window.initMap = function () {
       { featureType:'water', elementType:'geometry', stylers:[{color:'#d4e8f0'}] },
     ],
   });
+
   new google.maps.Marker({ map, position:{lat,lng},
     icon:{path:google.maps.SymbolPath.CIRCLE,scale:9,fillColor:'#fff',fillOpacity:1,strokeColor:'#b8906a',strokeWeight:3},title:'You are here' });
-  new google.maps.places.PlacesService(map).nearbySearch(
-    {location:{lat,lng},radius:2000,type:'gym'},
+
+  function calcMiles(lat1, lng1, lat2, lng2) {
+    const R = 3958.8;
+    const dLat = (lat2-lat1)*Math.PI/180;
+    const dLng = (lng2-lng1)*Math.PI/180;
+    const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLng/2)**2;
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  }
+
+  function getFitnessType(name, types) {
+    const n = (name||'').toLowerCase();
+    if (n.includes('f45'))      return '⚡ F45';
+    if (n.includes('crossfit')) return '🔥 CrossFit';
+    if (n.includes('pilates'))  return '🤸 Pilates';
+    if (n.includes('yoga'))     return '🧘 Yoga';
+    if (n.includes('spin') || n.includes('cycle')) return '🚴 Cycling';
+    if (n.includes('boxing'))   return '🥊 Boxing';
+    if (n.includes('swim'))     return '🏊 Swimming';
+    if ((types||[]).includes('gym')) return '🏋️ Gym';
+    return '🏃 Fitness';
+  }
+
+  gymList.style.display = 'block';
+  gymList.innerHTML = '<p style="color:var(--text-soft);font-size:13px;text-align:center;padding:16px;">🔍 Finding fitness venues nearby...</p>';
+
+  const service = new google.maps.places.PlacesService(map);
+  const RADIUS_M = 4828;
+
+  service.nearbySearch(
+    { location:{lat,lng}, radius:RADIUS_M, type:'gym' },
     (results, status) => {
-      if (status !== google.maps.places.PlacesServiceStatus.OK) return;
-      results.slice(0,10).forEach(p => new google.maps.Marker({
-        map, position:p.geometry.location, title:p.name,
+      if (status !== google.maps.places.PlacesServiceStatus.OK || !results.length) {
+        gymList.innerHTML = '<p style="color:var(--text-soft);font-size:13px;text-align:center;padding:16px;">No fitness venues found within 3 miles.</p>';
+        return;
+      }
+
+      const sorted = results
+        .map(p => ({ ...p, dist: calcMiles(lat, lng, p.geometry.location.lat(), p.geometry.location.lng()) }))
+        .filter(p => p.dist <= 3)
+        .sort((a,b) => a.dist - b.dist)
+        .slice(0, 8);
+
+      sorted.forEach(p => new google.maps.Marker({
+        map, position: p.geometry.location, title: p.name,
         icon:{path:google.maps.SymbolPath.CIRCLE,scale:8,fillColor:'#b8906a',fillOpacity:1,strokeColor:'#fff',strokeWeight:2}
       }));
+
+      const items = sorted.map(p => ({ place:p, hours:null }));
+      let done = 0;
+
+      sorted.forEach((place, i) => {
+        service.getDetails(
+          { placeId: place.place_id, fields: ['opening_hours','types'] },
+          (detail, s) => {
+            if (s === google.maps.places.PlacesServiceStatus.OK && detail) {
+              items[i].hours = detail.opening_hours;
+            }
+            done++;
+            if (done === sorted.length) renderGymList();
+          }
+        );
+      });
+
+      function renderGymList() {
+        if (!items.length) {
+          gymList.innerHTML = '<p style="color:var(--text-soft);font-size:13px;text-align:center;padding:16px;">No venues found within 3 miles.</p>';
+          return;
+        }
+        gymList.innerHTML = items.map(({ place, hours }) => {
+          const isOpen   = hours?.isOpen?.() ?? null;
+          const openBadge = isOpen === null
+            ? `<span style="color:#c4b5a8;">Hours N/A</span>`
+            : isOpen
+              ? `<span style="color:#7aaa8a;font-weight:600;">● Open now</span>`
+              : `<span style="color:#c0716a;font-weight:600;">● Closed</span>`;
+          const dayIdx   = new Date().getDay();
+          const wdIdx    = dayIdx === 0 ? 6 : dayIdx - 1;
+          const todayTxt = hours?.weekday_text?.[wdIdx];
+          const hoursStr = todayTxt ? todayTxt.split(': ').slice(1).join(': ') || 'N/A' : '';
+          const type     = getFitnessType(place.name, place.types);
+          return `<div class="gym-item">
+            <div class="gym-info" style="flex:1;">
+              <div class="gym-name">${place.name}</div>
+              <div class="gym-meta">
+                <span class="gym-type">${type}</span>
+                <span class="gym-dist">📍 ${place.dist.toFixed(1)} mi away</span>
+              </div>
+              <div class="gym-hours">${openBadge}${hoursStr ? ' · ' + hoursStr : ''}</div>
+            </div>
+          </div>`;
+        }).join('');
+      }
     }
   );
 };
