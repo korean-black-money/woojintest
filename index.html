@@ -562,7 +562,6 @@ function calculateAndShow() {
    GYM / MAP — state
 ───────────────────────────────────────────────────────────── */
 var _gymMap      = null;
-var _gymService  = null;
 var _gymMarkers  = [];   // venue markers
 var _userMarker  = null; // blue dot for GPS position
 var _userLat     = null;
@@ -608,7 +607,7 @@ function _bootstrapMaps() {
   if (window._gymMapsLoading || window._gymMapsLoaded) return;
   window._gymMapsLoading = true;
   var s  = document.createElement('script');
-  s.src  = 'https://maps.googleapis.com/maps/api/js?key=' + CONFIG.google_maps_key + '&libraries=places&callback=initMap';
+  s.src  = 'https://maps.googleapis.com/maps/api/js?key=' + CONFIG.google_maps_key + '&v=weekly&callback=initMap';
   s.async = true;
   document.head.appendChild(s);
 }
@@ -665,8 +664,6 @@ window.initMap = function () {
       { featureType:'poi',  elementType:'geometry',        stylers:[{color:'#f0e8e0'}] },
     ],
   });
-  _gymService = new google.maps.places.PlacesService(_gymMap);
-
   /* Enter key support in search box */
   document.getElementById('gymSearchInput').addEventListener('keydown', function (e) {
     if (e.key === 'Enter') { e.preventDefault(); searchLocation(); }
@@ -757,19 +754,26 @@ function _geocodeAndSearch(address) {
 }
 
 /* ─────────────────────────────────────────────────────────────
-   FITNESS SEARCH — single reliable Places nearbySearch
+   FITNESS SEARCH — New Places API (Place.searchNearby)
 ───────────────────────────────────────────────────────────── */
-function searchAllFitnessVenues(lat, lng, onDone) {
-  _gymService.nearbySearch(
-    { location: { lat: lat, lng: lng }, radius: 5000, type: 'gym' },
-    function (results, status) {
-      if (status === google.maps.places.PlacesServiceStatus.OK && results) {
-        onDone(results);
-      } else {
-        onDone([]);
-      }
-    }
-  );
+async function searchAllFitnessVenues(lat, lng) {
+  try {
+    var PlacesLib = await google.maps.importLibrary('places');
+    var Place = PlacesLib.Place;
+    var result = await Place.searchNearby({
+      fields: ['id', 'displayName', 'location', 'currentOpeningHours', 'regularOpeningHours', 'types'],
+      locationRestriction: {
+        center: new google.maps.LatLng(lat, lng),
+        radius: 5000,
+      },
+      includedPrimaryTypes: ['gym'],
+      maxResultCount: 20,
+    });
+    return (result && result.places) ? result.places : [];
+  } catch (err) {
+    console.error('Places searchNearby error:', err);
+    return [];
+  }
 }
 
 /* ─────────────────────────────────────────────────────────────
@@ -799,7 +803,7 @@ function placeUserDot(lat, lng) {
 /* ─────────────────────────────────────────────────────────────
    MAIN SEARCH + RENDER
 ───────────────────────────────────────────────────────────── */
-function doSearchAt(lat, lng, label, isUserLocation) {
+async function doSearchAt(lat, lng, label, isUserLocation) {
   var mapEl   = document.getElementById('map');
   var gymList = document.getElementById('gymList');
 
@@ -809,116 +813,98 @@ function doSearchAt(lat, lng, label, isUserLocation) {
   gymList.style.display = 'block';
   gymList.innerHTML = '<p style="color:var(--text-soft);font-size:13px;text-align:center;padding:20px;">🔍 Searching for fitness venues nearby…</p>';
 
-  /* clear old venue markers */
   _gymMarkers.forEach(function (m) { m.setMap(null); });
   _gymMarkers = [];
 
-  /* pan map */
   _gymMap.setCenter({ lat: lat, lng: lng });
   _gymMap.setZoom(14);
   google.maps.event.trigger(_gymMap, 'resize');
 
   if (isUserLocation) {
-    /* GPS — show pulsing blue dot */
     placeUserDot(lat, lng);
   } else {
-    /* text search — amber pin at search centre */
     var searchPin = new google.maps.Marker({
       map: _gymMap, position: { lat: lat, lng: lng }, zIndex: 999, title: label,
       icon: { path: google.maps.SymbolPath.CIRCLE, scale: 9,
               fillColor:'#b8906a', fillOpacity:1, strokeColor:'#fff', strokeWeight:3 }
     });
     _gymMarkers.push(searchPin);
-    /* if we also have the real GPS, keep the blue dot visible */
     if (_userLat !== null) placeUserDot(_userLat, _userLng);
   }
 
-  searchAllFitnessVenues(lat, lng, function (rawResults) {
-    var sorted = rawResults
-      .map(function (p) {
-        return Object.assign({}, p, {
-          dist: calcKm(lat, lng, p.geometry.location.lat(), p.geometry.location.lng())
-        });
-      })
-      .filter(function (p) { return p.dist <= 5; })
-      .sort(function (a, b) { return a.dist - b.dist; })
-      .slice(0, 12);
+  var rawPlaces = await searchAllFitnessVenues(lat, lng);
 
-    if (!sorted.length) {
-      gymList.innerHTML = '<p style="color:var(--text-soft);font-size:13px;text-align:center;padding:20px;">No fitness venues found within 5 km. Try searching a different area.</p>';
-      return;
-    }
-
-    /* place venue markers + info windows */
-    sorted.forEach(function (p) {
-      var ft     = getFitnessType(p.name, p.types);
-      var marker = new google.maps.Marker({
-        map: _gymMap, position: p.geometry.location, title: p.name,
-        icon: { path: google.maps.SymbolPath.CIRCLE, scale: 8,
-                fillColor:'#b8906a', fillOpacity:1, strokeColor:'#fff', strokeWeight:2 }
-      });
-      var iw = new google.maps.InfoWindow({
-        content: '<div style="font-family:Inter,sans-serif;padding:2px 4px;">' +
-                 '<b style="font-size:13px;">' + ft.emoji + ' ' + p.name + '</b><br>' +
-                 '<span style="font-size:12px;color:#6b5c54;">📍 ' + p.dist.toFixed(1) + ' km away</span></div>'
-      });
-      marker.addListener('click', function () { iw.open(_gymMap, marker); });
-      _gymMarkers.push(marker);
-    });
-
-    /* fetch opening hours for each venue in parallel */
-    var items   = sorted.map(function (p) { return { place: p, detail: null }; });
-    var fetched = 0;
-
-    sorted.forEach(function (place, i) {
-      _gymService.getDetails(
-        { placeId: place.place_id, fields: ['opening_hours', 'types'] },
-        function (detail, s) {
-          if (s === google.maps.places.PlacesServiceStatus.OK && detail) items[i].detail = detail;
-          if (++fetched === sorted.length) renderGymList();
-        }
-      );
-    });
-
-    function renderGymList() {
-      var dayIdx = new Date().getDay();
-      var wdIdx  = dayIdx === 0 ? 6 : dayIdx - 1; /* Mon=0 in weekday_text */
-
-      gymList.innerHTML =
-        '<div class="gym-count-badge">' + sorted.length + ' venues found within 5 km</div>' +
-        items.map(function (item) {
-          var place  = item.place;
-          var detail = item.detail;
-          var hours  = detail && detail.opening_hours;
-          var isOpen = hours && typeof hours.isOpen === 'function' ? hours.isOpen() : null;
-
-          var todayTxt = hours && hours.weekday_text && hours.weekday_text[wdIdx] ? hours.weekday_text[wdIdx] : '';
-          var hoursStr = todayTxt ? todayTxt.split(': ').slice(1).join(': ') : '';
-
-          var openBadge;
-          if (isOpen === null)  openBadge = '<span class="gym-hours-na">Hours unavailable</span>';
-          else if (isOpen)      openBadge = '<span class="gym-open">● Open now</span>';
-          else                  openBadge = '<span class="gym-closed">● Closed now</span>';
-
-          var ft = getFitnessType(place.name, (detail && detail.types) || place.types);
-
-          return '<div class="gym-item">' +
-                   '<div class="gym-icon-wrap">' + ft.emoji + '</div>' +
-                   '<div style="flex:1;min-width:0;">' +
-                     '<div class="gym-name">' + place.name + '</div>' +
-                     '<div class="gym-meta">' +
-                       '<span class="gym-type">' + ft.label + '</span>' +
-                       '<span class="gym-dist">📍 ' + place.dist.toFixed(1) + ' km away</span>' +
-                     '</div>' +
-                     '<div class="gym-hours-row">' +
-                       openBadge +
-                       (hoursStr ? '<span class="gym-hours-text">· ' + hoursStr + '</span>' : '') +
-                     '</div>' +
-                   '</div>' +
-                 '</div>';
-        }).join('');
-    }
+  var withDist = [];
+  rawPlaces.forEach(function (p) {
+    if (!p.location) return;
+    var plLat = typeof p.location.lat === 'function' ? p.location.lat() : p.location.lat;
+    var plLng = typeof p.location.lng === 'function' ? p.location.lng() : p.location.lng;
+    var d = calcKm(lat, lng, plLat, plLng);
+    if (d <= 5) withDist.push({ place: p, dist: d });
   });
+  withDist.sort(function (a, b) { return a.dist - b.dist; });
+  withDist = withDist.slice(0, 12);
+
+  if (!withDist.length) {
+    gymList.innerHTML = '<p style="color:var(--text-soft);font-size:13px;text-align:center;padding:20px;">No fitness venues found within 5 km. Try searching a different area.</p>';
+    return;
+  }
+
+  /* place venue markers + info windows */
+  withDist.forEach(function (item) {
+    var p  = item.place;
+    var ft = getFitnessType(p.displayName, p.types);
+    var marker = new google.maps.Marker({
+      map: _gymMap, position: p.location, title: p.displayName,
+      icon: { path: google.maps.SymbolPath.CIRCLE, scale: 8,
+              fillColor:'#b8906a', fillOpacity:1, strokeColor:'#fff', strokeWeight:2 }
+    });
+    var iw = new google.maps.InfoWindow({
+      content: '<div style="font-family:Inter,sans-serif;padding:2px 4px;">' +
+               '<b style="font-size:13px;">' + ft.emoji + ' ' + p.displayName + '</b><br>' +
+               '<span style="font-size:12px;color:#6b5c54;">📍 ' + item.dist.toFixed(1) + ' km away</span></div>'
+    });
+    marker.addListener('click', function () { iw.open(_gymMap, marker); });
+    _gymMarkers.push(marker);
+  });
+
+  /* render list directly (opening hours already included in searchNearby response) */
+  var dayIdx = new Date().getDay();
+  var wdIdx  = dayIdx === 0 ? 6 : dayIdx - 1;
+
+  gymList.innerHTML =
+    '<div class="gym-count-badge">' + withDist.length + ' venues found within 5 km</div>' +
+    withDist.map(function (item) {
+      var p     = item.place;
+      var hours = p.currentOpeningHours || p.regularOpeningHours || null;
+      var isOpen = (hours && hours.openNow !== undefined) ? hours.openNow : null;
+      var weekDesc = (p.regularOpeningHours && p.regularOpeningHours.weekdayDescriptions) ||
+                     (p.currentOpeningHours && p.currentOpeningHours.weekdayDescriptions) || [];
+      var todayTxt = weekDesc[wdIdx] || '';
+      var hoursStr = todayTxt ? todayTxt.split(': ').slice(1).join(': ') : '';
+
+      var openBadge;
+      if (isOpen === null)  openBadge = '<span class="gym-hours-na">Hours unavailable</span>';
+      else if (isOpen)      openBadge = '<span class="gym-open">● Open now</span>';
+      else                  openBadge = '<span class="gym-closed">● Closed now</span>';
+
+      var ft = getFitnessType(p.displayName, p.types);
+
+      return '<div class="gym-item">' +
+               '<div class="gym-icon-wrap">' + ft.emoji + '</div>' +
+               '<div style="flex:1;min-width:0;">' +
+                 '<div class="gym-name">' + p.displayName + '</div>' +
+                 '<div class="gym-meta">' +
+                   '<span class="gym-type">' + ft.label + '</span>' +
+                   '<span class="gym-dist">📍 ' + item.dist.toFixed(1) + ' km away</span>' +
+                 '</div>' +
+                 '<div class="gym-hours-row">' +
+                   openBadge +
+                   (hoursStr ? '<span class="gym-hours-text">· ' + hoursStr + '</span>' : '') +
+                 '</div>' +
+               '</div>' +
+             '</div>';
+    }).join('');
 }
 
 /* ─────────────────────────────────────────────────────────────
