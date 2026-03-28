@@ -30,7 +30,6 @@
 
     body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; line-height: 1.6; }
 
-    /* HERO */
     .hero {
       background: linear-gradient(160deg, #fffdf9 0%, #fdf5ed 60%, #faf8f5 100%);
       padding: 64px 20px 52px; text-align: center;
@@ -52,17 +51,14 @@
     .hero-pills { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
     .pill { background: var(--bg-card); border: 1px solid var(--border); color: var(--text-mid); padding: 6px 16px; border-radius: 100px; font-size: 12px; font-weight: 500; }
 
-    /* LAYOUT */
     .main { max-width: 620px; margin: 0 auto; padding: 32px 16px 80px; }
 
-    /* CARD */
     .card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; margin-bottom: 16px; box-shadow: var(--shadow); }
     .card-header { display: flex; align-items: center; gap: 14px; margin-bottom: 24px; }
     .card-icon { width: 44px; height: 44px; background: var(--primary-bg); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
     .card-title { font-size: 16px; font-weight: 700; color: var(--text); }
     .card-subtitle { font-size: 12px; color: var(--text-soft); margin-top: 2px; }
 
-    /* FORM */
     .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
     .form-row.single { grid-template-columns: 1fr; }
     .form-group { display: flex; flex-direction: column; gap: 6px; }
@@ -75,13 +71,11 @@
     .form-group input:focus, .form-group select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(184,144,106,0.1); background: #fff; }
     .form-group input::placeholder { color: var(--border); }
 
-    /* Gender Toggle */
     .gender-toggle { display: flex; background: var(--bg-input); border-radius: 10px; padding: 4px; border: 1px solid var(--border); gap: 4px; }
     .gender-toggle input[type="radio"] { display: none; }
     .gender-toggle label { flex: 1; text-align: center; padding: 9px 12px; border-radius: 7px; cursor: pointer; font-size: 13px; font-weight: 500; color: var(--text-soft); transition: all 0.2s; }
     .gender-toggle input:checked + label { background: var(--primary); color: #fff; font-weight: 700; }
 
-    /* Unit Toggle */
     .unit-toggle-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
     .unit-toggle-row > label { font-size: 11px; font-weight: 600; color: var(--text-soft); text-transform: uppercase; letter-spacing: 0.8px; }
     .unit-switch { display: flex; background: var(--bg-input); border: 1px solid var(--border); border-radius: 8px; padding: 3px; gap: 3px; }
@@ -93,18 +87,15 @@
 
     .form-divider { height: 1px; background: var(--border-light); margin: 18px 0; }
 
-    /* Email Section */
     .email-section { background: var(--primary-bg); border: 1px solid #e8cdb0; border-radius: 12px; padding: 18px; margin: 16px 0; }
     .email-section-label { display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; color: var(--primary); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
     .email-note { font-size: 11px; color: var(--text-soft); margin-top: 8px; line-height: 1.6; }
 
-    /* Submit */
     .btn-primary { width: 100%; padding: 15px; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: #fff; border: none; border-radius: 100px; font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 700; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; letter-spacing: 0.3px; }
     .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(184,144,106,0.3); }
     .btn-primary:active { transform: translateY(0); }
     .btn-primary:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
 
-    /* RESULTS */
     #resultsSection { display: none; animation: fadeUp 0.45s ease; }
     @keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
 
@@ -141,7 +132,7 @@
     .food-cat ul li { font-size: 12px; color: var(--text-soft); padding: 2px 0; }
     .food-cat ul li::before { content: '·'; color: var(--primary); font-weight: 700; margin-right: 5px; }
 
-    /* Gym */
+    /* ── GYM SECTION ── */
     .gym-search-row { display: flex; gap: 8px; margin-bottom: 14px; }
     .gym-search-row input { flex: 1; background: var(--bg-input); border: 1px solid var(--border); border-radius: 10px; padding: 10px 14px; font-family: 'Inter', sans-serif; font-size: 13px; color: var(--text); outline: none; transition: border-color 0.2s, box-shadow 0.2s; }
     .gym-search-row input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(184,144,106,0.1); background: #fff; }
@@ -149,30 +140,52 @@
     .btn-gym-search { padding: 10px 16px; background: var(--primary); color: #fff; border: none; border-radius: 10px; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; transition: background 0.2s; }
     .btn-gym-search:hover { background: var(--primary-dark); }
 
+    #map { width: 100%; height: 280px; border-radius: 12px; display: none; margin-bottom: 4px; }
+
     .gym-placeholder { background: var(--bg-input); border-radius: 12px; padding: 28px 20px; text-align: center; color: var(--text-soft); font-size: 14px; line-height: 1.9; }
     .btn-location { display: inline-flex; align-items: center; gap: 6px; margin-top: 14px; padding: 10px 22px; background: var(--primary-bg); border: 1px solid #e8cdb0; color: var(--primary); border-radius: 100px; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
     .btn-location:hover { background: #f7e6d4; }
-    #map { width: 100%; height: 260px; border-radius: 12px; display: none; }
 
-    .gym-list { display: none; margin-top: 14px; }
-    .gym-item { display: flex; align-items: flex-start; gap: 14px; padding: 14px 0; border-bottom: 1px solid var(--border); }
-    .gym-item:last-child { border-bottom: none; }
-    .gym-name { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
-    .gym-meta { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 4px; }
-    .gym-type { font-size: 12px; background: var(--primary-bg); color: var(--primary); padding: 2px 10px; border-radius: 100px; font-weight: 600; }
-    .gym-dist { font-size: 12px; color: var(--text-soft); font-weight: 500; }
-    .gym-hours { font-size: 12px; color: var(--text-soft); }
-
-    /* Auto-location banner */
-    .location-banner {
-      background: var(--primary-bg); border: 1px solid #e8cdb0; border-radius: 12px;
-      padding: 14px 18px; display: flex; align-items: center; gap: 12px; margin-bottom: 14px;
-    }
+    .location-banner { background: var(--primary-bg); border: 1px solid #e8cdb0; border-radius: 12px; padding: 14px 18px; display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
     .location-banner .loc-icon { font-size: 22px; flex-shrink: 0; }
     .location-banner p { font-size: 13px; color: var(--text-mid); }
     .location-banner strong { display: block; font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 2px; }
 
-    /* Product CTA */
+    .gym-list { display: none; margin-top: 14px; }
+    .gym-count-badge { font-size: 12px; color: var(--text-soft); margin-bottom: 10px; padding: 0 2px; }
+    .gym-item { display: flex; align-items: flex-start; gap: 14px; padding: 16px; margin-bottom: 10px; background: var(--bg-input); border: 1px solid var(--border); border-radius: 14px; transition: border-color 0.2s; }
+    .gym-item:hover { border-color: var(--primary-light); }
+    .gym-icon-wrap { width: 42px; height: 42px; background: var(--primary-bg); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+    .gym-name { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 6px; line-height: 1.3; }
+    .gym-meta { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 5px; }
+    .gym-type { font-size: 11px; background: var(--primary-bg); color: var(--primary); padding: 3px 10px; border-radius: 100px; font-weight: 600; border: 1px solid #e8cdb0; }
+    .gym-dist { font-size: 12px; color: var(--text-mid); font-weight: 600; }
+    .gym-hours-row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-top: 2px; }
+    .gym-open   { font-size: 12px; color: #52b788; font-weight: 600; }
+    .gym-closed { font-size: 12px; color: #c0716a; font-weight: 600; }
+    .gym-hours-text { font-size: 12px; color: var(--text-soft); }
+    .gym-hours-na   { font-size: 12px; color: var(--text-soft); }
+
+    /* user location blue pulsing dot (injected via DOM in initMap) */
+    .user-dot-outer {
+      position: absolute;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+    }
+    .user-dot-inner {
+      width: 16px; height: 16px;
+      background: #4285F4;
+      border: 3px solid #fff;
+      border-radius: 50%;
+      box-shadow: 0 2px 8px rgba(66,133,244,0.5);
+      animation: user-pulse 2s ease-out infinite;
+    }
+    @keyframes user-pulse {
+      0%   { box-shadow: 0 0 0 0 rgba(66,133,244,0.5); }
+      70%  { box-shadow: 0 0 0 12px rgba(66,133,244,0); }
+      100% { box-shadow: 0 0 0 0 rgba(66,133,244,0); }
+    }
+
     .product-cta { background: linear-gradient(135deg, #fff9f4, #fdf5ed); border: 1px solid #e8cdb0; border-radius: var(--radius); padding: 32px 24px; text-align: center; }
     .product-cta .cta-icon { font-size: 38px; margin-bottom: 12px; }
     .product-cta h3 { font-size: 18px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
@@ -330,7 +343,6 @@
     </form>
   </div>
 
-  <!-- AdSense -->
   <div style="margin-bottom:16px;">
     <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9247222675222330" data-ad-slot="auto" data-ad-format="auto" data-full-width-responsive="true"></ins>
     <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
@@ -374,21 +386,22 @@
     <div class="card">
       <div class="card-header">
         <div class="card-icon">🏋️</div>
-        <div><div class="card-title">Fitness Venues Near You</div><div class="card-subtitle">Gyms, F45, CrossFit, Pilates and more · within 3 miles</div></div>
-      </div>
-
-      <!-- 자동 위치 감지 배너 -->
-      <div class="location-banner" id="locationBanner">
-        <div class="loc-icon">📍</div>
         <div>
-          <strong>Finding fitness venues near you...</strong>
-          <p>Allow location access in the browser prompt to see nearby gyms</p>
+          <div class="card-title">Fitness Venues Near You</div>
+          <div class="card-subtitle">Gyms, F45, CrossFit, Pilates and more · within 3 miles</div>
         </div>
       </div>
 
-      <!-- 수동 검색 -->
+      <div class="location-banner" id="locationBanner">
+        <div class="loc-icon">📍</div>
+        <div>
+          <strong id="locationBannerTitle">Finding fitness venues near you…</strong>
+          <p id="locationBannerMsg">Allow location access in the browser prompt to see nearby gyms</p>
+        </div>
+      </div>
+
       <div class="gym-search-row">
-        <input type="text" id="gymSearchInput" placeholder="Or search any location (e.g. Manchester City Centre)" />
+        <input type="text" id="gymSearchInput" placeholder="Search any location (e.g. Whitechapel, London)" />
         <button class="btn-gym-search" onclick="searchLocation()">🔍 Search</button>
       </div>
 
@@ -396,6 +409,7 @@
         <p>📍 Allow location access or search a city above to find fitness venues within 3 miles</p>
         <button class="btn-location" onclick="requestLocation()">📍 Try Again</button>
       </div>
+
       <div id="map"></div>
       <div id="gymList" class="gym-list"></div>
     </div>
@@ -413,6 +427,9 @@
 <div class="toast" id="toast"></div>
 
 <script>
+/* ─────────────────────────────────────────────────────────────
+   CONFIG
+───────────────────────────────────────────────────────────── */
 const CONFIG = {
   emailjs_public_key : 'tc-AW0DXRU_Qd8oyw',
   emailjs_service_id : 'service_offb76e',
@@ -459,16 +476,16 @@ function getFoodRecs(g) {
 }
 
 function renderFoodRecs(goal) {
-  const recs = getFoodRecs(goal);
-  const grid = document.getElementById('foodGrid');
-  grid.innerHTML = Object.entries(recs).map(([cat, items]) => `
+  document.getElementById('foodGrid').innerHTML = Object.entries(getFoodRecs(goal)).map(([cat, items]) => `
     <div class="food-cat">
       <h4>${cat}</h4>
       <ul>${items.map(i => `<li>${i}</li>`).join('')}</ul>
-    </div>
-  `).join('');
+    </div>`).join('');
 }
 
+/* ─────────────────────────────────────────────────────────────
+   UNIT TOGGLES
+───────────────────────────────────────────────────────────── */
 const unitState = { height: 'imperial', weight: 'imperial' };
 function setUnit(field, mode) {
   unitState[field] = mode;
@@ -496,6 +513,9 @@ function fmtWeight(form) {
   return `${form.elements['weight_st'].value||'—'} st ${form.elements['weight_lbs'].value||'0'} lbs`;
 }
 
+/* ─────────────────────────────────────────────────────────────
+   CALCULATE
+───────────────────────────────────────────────────────────── */
 function calculateAndShow() {
   const form         = document.forms['bmrForm'];
   const gender       = form.elements['gender'].value;
@@ -531,17 +551,143 @@ function calculateAndShow() {
   document.getElementById('resultsSection').style.display = 'block';
   setTimeout(() => document.getElementById('resultsSection').scrollIntoView({ behavior:'smooth', block:'start' }), 60);
 
-  // 지도 API 미리 로드
   _bootstrapMaps();
-
-  // ★ 자동 위치 감지 시작
   autoDetectLocation();
 
   if (email) sendEmail(email, { tdee, proteinG, fatG, carbG, goal, gender, age,
     heightDisplay: fmtHeight(form), weightDisplay: fmtWeight(form) });
 }
 
-// ★ 자동 위치 감지
+/* ─────────────────────────────────────────────────────────────
+   GYM / MAP — state
+───────────────────────────────────────────────────────────── */
+var _gymMap      = null;
+var _gymService  = null;
+var _gymMarkers  = [];   // venue markers
+var _userMarker  = null; // blue dot for GPS position
+var _userLat     = null;
+var _userLng     = null;
+
+/* Haversine */
+function calcMiles(lat1, lng1, lat2, lng2) {
+  var R    = 3958.8;
+  var dLat = (lat2-lat1)*Math.PI/180;
+  var dLng = (lng2-lng1)*Math.PI/180;
+  var a    = Math.sin(dLat/2)*Math.sin(dLat/2) +
+             Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*
+             Math.sin(dLng/2)*Math.sin(dLng/2);
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+}
+
+/* Categorise venue */
+function getFitnessType(name, types) {
+  var n = (name || '').toLowerCase();
+  if (n.indexOf('f45')      !== -1) return { emoji:'⚡', label:'F45 Training' };
+  if (n.indexOf('crossfit') !== -1) return { emoji:'🔥', label:'CrossFit' };
+  if (n.indexOf('pilates')  !== -1) return { emoji:'🤸', label:'Pilates' };
+  if (n.indexOf('yoga')     !== -1) return { emoji:'🧘', label:'Yoga' };
+  if (n.indexOf('spin')     !== -1 || n.indexOf('cycle') !== -1 || n.indexOf('cycling') !== -1)
+                                    return { emoji:'🚴', label:'Cycling' };
+  if (n.indexOf('boxing')   !== -1 || n.indexOf('muay') !== -1 || n.indexOf('kickbox') !== -1)
+                                    return { emoji:'🥊', label:'Boxing' };
+  if (n.indexOf('swim')     !== -1) return { emoji:'🏊', label:'Swimming' };
+  if (n.indexOf('hiit')     !== -1 || n.indexOf('barry') !== -1)
+                                    return { emoji:'🔥', label:'HIIT' };
+  if (n.indexOf('barre')    !== -1) return { emoji:'🩰', label:'Barre' };
+  if (n.indexOf('climb')    !== -1) return { emoji:'🧗', label:'Climbing' };
+  if (n.indexOf('dance')    !== -1 || n.indexOf('zumba') !== -1)
+                                    return { emoji:'💃', label:'Dance Fitness' };
+  if ((types||[]).indexOf('gym') !== -1) return { emoji:'🏋️', label:'Gym' };
+  return { emoji:'🏃', label:'Fitness Studio' };
+}
+
+/* ─────────────────────────────────────────────────────────────
+   MAPS BOOTSTRAP — loads the API script once
+───────────────────────────────────────────────────────────── */
+function _bootstrapMaps() {
+  if (window._gymMapsLoading || window._gymMapsLoaded) return;
+  window._gymMapsLoading = true;
+  var s  = document.createElement('script');
+  s.src  = 'https://maps.googleapis.com/maps/api/js?key=' + CONFIG.google_maps_key + '&libraries=places&callback=initMap';
+  s.async = true;
+  document.head.appendChild(s);
+}
+
+/* ─────────────────────────────────────────────────────────────
+   initMap — called by the Maps API when ready
+   (PulsingDot OverlayView is defined HERE, after Maps loads)
+───────────────────────────────────────────────────────────── */
+window.initMap = function () {
+  window._gymMapsLoaded  = true;
+  window._gymMapsLoading = false;
+
+  /* ── Pulsing blue dot OverlayView (defined inside initMap so
+        google.maps is guaranteed to exist) ── */
+  function PulsingDot(latLng) {
+    this._latLng = latLng;
+    this._div    = null;
+  }
+  PulsingDot.prototype = Object.create(google.maps.OverlayView.prototype);
+  PulsingDot.prototype.onAdd = function () {
+    var d = document.createElement('div');
+    d.className = 'user-dot-outer';
+    d.innerHTML = '<div class="user-dot-inner"></div>';
+    this._div = d;
+    this.getPanes().overlayMouseTarget.appendChild(d);
+  };
+  PulsingDot.prototype.draw = function () {
+    if (!this._div) return;
+    var pt = this.getProjection().fromLatLngToDivPixel(this._latLng);
+    this._div.style.left = pt.x + 'px';
+    this._div.style.top  = pt.y + 'px';
+  };
+  PulsingDot.prototype.onRemove = function () {
+    if (this._div && this._div.parentNode) {
+      this._div.parentNode.removeChild(this._div);
+      this._div = null;
+    }
+  };
+  /* store constructor on window so doSearchAt can use it */
+  window._PulsingDot = PulsingDot;
+
+  var mapEl = document.getElementById('map');
+  mapEl.style.display = 'block';
+
+  _gymMap = new google.maps.Map(mapEl, {
+    center: { lat: 51.505, lng: -0.09 }, zoom: 14,
+    styles: [
+      { elementType:'geometry',           stylers:[{color:'#f5f0eb'}] },
+      { elementType:'labels.text.fill',   stylers:[{color:'#6b5c54'}] },
+      { elementType:'labels.text.stroke', stylers:[{color:'#fdf5ed'}] },
+      { featureType:'road', elementType:'geometry',        stylers:[{color:'#ecddd4'}] },
+      { featureType:'road', elementType:'labels.text.fill',stylers:[{color:'#9b8e87'}] },
+      { featureType:'water',elementType:'geometry',        stylers:[{color:'#d4e8f0'}] },
+      { featureType:'poi',  elementType:'geometry',        stylers:[{color:'#f0e8e0'}] },
+    ],
+  });
+  _gymService = new google.maps.places.PlacesService(_gymMap);
+
+  /* Enter key support in search box */
+  document.getElementById('gymSearchInput').addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') { e.preventDefault(); searchLocation(); }
+  });
+
+  /* Flush any pending action queued before Maps loaded */
+  if (window._pendingSearch) {
+    var q = window._pendingSearch; window._pendingSearch = null;
+    _geocodeAndSearch(q);
+  } else if (window._pendingLat != null) {
+    var lat = window._pendingLat, lng = window._pendingLng;
+    window._pendingLat = window._pendingLng = null;
+    doSearchAt(lat, lng, 'My Location', true);
+  } else {
+    mapEl.style.display = 'none';
+  }
+};
+
+/* ─────────────────────────────────────────────────────────────
+   LOCATION — auto + manual
+───────────────────────────────────────────────────────────── */
 function autoDetectLocation() {
   if (!navigator.geolocation) {
     document.getElementById('locationBanner').style.display = 'none';
@@ -549,17 +695,18 @@ function autoDetectLocation() {
     return;
   }
   navigator.geolocation.getCurrentPosition(
-    pos => {
+    function (pos) {
+      _userLat = pos.coords.latitude;
+      _userLng = pos.coords.longitude;
       document.getElementById('locationBanner').style.display = 'none';
       if (window._gymMapsLoaded) {
-        doSearchAt(pos.coords.latitude, pos.coords.longitude, 'My Location');
+        doSearchAt(_userLat, _userLng, 'My Location', true);
       } else {
-        window._pendingLat = pos.coords.latitude;
-        window._pendingLng = pos.coords.longitude;
+        window._pendingLat = _userLat;
+        window._pendingLng = _userLng;
       }
     },
-    () => {
-      // 위치 거부 시 수동 검색으로 안내
+    function () {
       document.getElementById('locationBanner').style.display = 'none';
       document.getElementById('gymPlaceholder').style.display = 'block';
       showToast('📍 Location denied — search a city instead');
@@ -570,210 +717,236 @@ function autoDetectLocation() {
 
 function requestLocation() {
   if (!navigator.geolocation) { showToast('Geolocation not supported'); return; }
-  showToast('📡 Finding your location...');
+  showToast('📡 Finding your location…');
   navigator.geolocation.getCurrentPosition(
-    pos => {
-      document.getElementById('gymPlaceholder').style.display = 'none';
-      document.getElementById('locationBanner').style.display = 'none';
-      if (window._gymMapsLoaded) {
-        doSearchAt(pos.coords.latitude, pos.coords.longitude, 'My Location');
-      } else {
-        window._pendingLat = pos.coords.latitude;
-        window._pendingLng = pos.coords.longitude;
-      }
+    function (pos) {
+      _userLat = pos.coords.latitude;
+      _userLng = pos.coords.longitude;
+      document.getElementById('gymPlaceholder').style.display  = 'none';
+      document.getElementById('locationBanner').style.display  = 'none';
+      if (window._gymMapsLoaded) doSearchAt(_userLat, _userLng, 'My Location', true);
+      else { window._pendingLat = _userLat; window._pendingLng = _userLng; }
     },
-    () => showToast('⚠️ Location access denied')
+    function () { showToast('⚠️ Location access denied'); }
   );
 }
 
 function searchLocation() {
-  const input = document.getElementById('gymSearchInput').value.trim();
+  var input = document.getElementById('gymSearchInput').value.trim();
   if (!input) { showToast('⚠️ Enter a location to search'); return; }
   document.getElementById('locationBanner').style.display = 'none';
   if (!window._gymMapsLoaded) {
     window._pendingSearch = input;
-    showToast('⏳ Loading map...');
+    showToast('⏳ Loading map…');
     return;
   }
   _geocodeAndSearch(input);
 }
 
 function _geocodeAndSearch(address) {
-  showToast('🔍 Searching...');
-  const geocoder = new google.maps.Geocoder();
-  geocoder.geocode({ address }, (results, status) => {
+  showToast('🔍 Searching…');
+  var geocoder = new google.maps.Geocoder();
+  geocoder.geocode({ address: address }, function (results, status) {
     if (status === 'OK' && results[0]) {
-      const loc = results[0].geometry.location;
-      doSearchAt(loc.lat(), loc.lng(), results[0].formatted_address);
+      var loc = results[0].geometry.location;
+      doSearchAt(loc.lat(), loc.lng(), results[0].formatted_address, false);
     } else {
       showToast('⚠️ Location not found. Try a more specific address.');
     }
   });
 }
 
-let _gymMap = null, _gymService = null, _gymMarkers = [];
+/* ─────────────────────────────────────────────────────────────
+   MULTI-TYPE FITNESS SEARCH
+   Google Places only accepts ONE type per call — we fire 8 in
+   parallel and deduplicate by place_id.
+───────────────────────────────────────────────────────────── */
+var FITNESS_QUERIES = [
+  { type: 'gym' },
+  { keyword: 'crossfit' },
+  { keyword: 'f45 training' },
+  { keyword: 'pilates studio' },
+  { keyword: 'yoga studio' },
+  { keyword: 'boxing gym' },
+  { keyword: 'spin cycling class' },
+  { keyword: 'barre fitness' },
+];
 
-function calcMiles(lat1, lng1, lat2, lng2) {
-  const R = 3958.8;
-  const dLat = (lat2-lat1)*Math.PI/180;
-  const dLng = (lng2-lng1)*Math.PI/180;
-  const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLng/2)**2;
-  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-}
+function searchAllFitnessVenues(lat, lng, onDone) {
+  var seen    = {};
+  var results = [];
+  var pending = FITNESS_QUERIES.length;
 
-function getFitnessType(name, types) {
-  const n = (name||'').toLowerCase();
-  if (n.includes('f45'))     return '⚡ F45';
-  if (n.includes('crossfit'))return '🔥 CrossFit';
-  if (n.includes('pilates')) return '🤸 Pilates';
-  if (n.includes('yoga'))    return '🧘 Yoga';
-  if (n.includes('spin') || n.includes('cycle')) return '🚴 Cycling';
-  if (n.includes('boxing'))  return '🥊 Boxing';
-  if (n.includes('swim'))    return '🏊 Swimming';
-  if ((types||[]).includes('gym')) return '🏋️ Gym';
-  return '🏃 Fitness';
-}
+  FITNESS_QUERIES.forEach(function (params) {
+    var req = { location: { lat: lat, lng: lng }, radius: 4828 };
+    if (params.type)    req.type    = params.type;
+    if (params.keyword) req.keyword = params.keyword;
 
-function _bootstrapMaps() {
-  if (window._gymMapsLoading || window._gymMapsLoaded) return;
-  window._gymMapsLoading = true;
-  const s = document.createElement('script');
-  s.src = `https://maps.googleapis.com/maps/api/js?key=${CONFIG.google_maps_key}&libraries=places&callback=initMap`;
-  s.async = true;
-  document.head.appendChild(s);
-}
-
-window.initMap = function () {
-  window._gymMapsLoaded  = true;
-  window._gymMapsLoading = false;
-
-  const mapEl = document.getElementById('map');
-  mapEl.style.display = 'block';
-
-  _gymMap = new google.maps.Map(mapEl, {
-    center: { lat: 51.505, lng: -0.09 }, zoom: 13,
-    styles: [
-      { elementType:'geometry',           stylers:[{color:'#f5f0eb'}] },
-      { elementType:'labels.text.fill',   stylers:[{color:'#6b5c54'}] },
-      { featureType:'road', elementType:'geometry', stylers:[{color:'#ecddd4'}] },
-      { featureType:'water', elementType:'geometry', stylers:[{color:'#d4e8f0'}] },
-    ],
+    _gymService.nearbySearch(req, function (res, status) {
+      if (status === google.maps.places.PlacesServiceStatus.OK && res) {
+        res.forEach(function (r) {
+          if (!seen[r.place_id]) { seen[r.place_id] = true; results.push(r); }
+        });
+      }
+      if (--pending === 0) onDone(results);
+    });
   });
-  _gymService = new google.maps.places.PlacesService(_gymMap);
+}
 
-  // 검색창 Enter 키 지원 (Autocomplete 없이 깔끔하게)
-  const searchEl = document.getElementById('gymSearchInput');
-  searchEl.addEventListener('keydown', e => { if (e.key==='Enter') { e.preventDefault(); searchLocation(); } });
+/* ─────────────────────────────────────────────────────────────
+   PLACE USER BLUE DOT
+───────────────────────────────────────────────────────────── */
+var _userOverlay = null;
 
-  // Flush pending actions
-  if (window._pendingSearch) {
-    const q = window._pendingSearch;
-    window._pendingSearch = null;
-    _geocodeAndSearch(q);
-  } else if (window._pendingLat != null) {
-    const lat = window._pendingLat, lng = window._pendingLng;
-    window._pendingLat = window._pendingLng = null;
-    doSearchAt(lat, lng, 'My Location');
+function placeUserDot(lat, lng) {
+  /* remove previous */
+  if (_userOverlay) { _userOverlay.setMap(null); _userOverlay = null; }
+  if (_userMarker)  { _userMarker.setMap(null);  _userMarker  = null; }
+
+  if (window._PulsingDot) {
+    _userOverlay = new window._PulsingDot(new google.maps.LatLng(lat, lng));
+    _userOverlay.setMap(_gymMap);
   } else {
-    mapEl.style.display = 'none';
+    /* fallback plain marker */
+    _userMarker = new google.maps.Marker({
+      map: _gymMap, position: { lat: lat, lng: lng }, zIndex: 999,
+      title: 'Your Location',
+      icon: { path: google.maps.SymbolPath.CIRCLE, scale: 9,
+              fillColor:'#4285F4', fillOpacity:1, strokeColor:'#fff', strokeWeight:3 }
+    });
   }
-};
+}
 
-function doSearchAt(lat, lng, label) {
-  const mapEl   = document.getElementById('map');
-  const gymList = document.getElementById('gymList');
+/* ─────────────────────────────────────────────────────────────
+   MAIN SEARCH + RENDER
+───────────────────────────────────────────────────────────── */
+function doSearchAt(lat, lng, label, isUserLocation) {
+  var mapEl   = document.getElementById('map');
+  var gymList = document.getElementById('gymList');
+
   document.getElementById('gymPlaceholder').style.display = 'none';
   document.getElementById('locationBanner').style.display = 'none';
   mapEl.style.display   = 'block';
   gymList.style.display = 'block';
-  gymList.innerHTML = '<p style="color:var(--text-soft);font-size:13px;text-align:center;padding:16px;">🔍 Finding fitness venues nearby...</p>';
+  gymList.innerHTML = '<p style="color:var(--text-soft);font-size:13px;text-align:center;padding:20px;">🔍 Searching for fitness venues nearby…</p>';
 
-  _gymMarkers.forEach(m => m.setMap(null));
+  /* clear old venue markers */
+  _gymMarkers.forEach(function (m) { m.setMap(null); });
   _gymMarkers = [];
-  _gymMap.setCenter({ lat, lng });
+
+  /* pan map */
+  _gymMap.setCenter({ lat: lat, lng: lng });
+  _gymMap.setZoom(14);
   google.maps.event.trigger(_gymMap, 'resize');
 
-  const centerMarker = new google.maps.Marker({
-    map: _gymMap, position: { lat, lng },
-    icon:{ path:google.maps.SymbolPath.CIRCLE, scale:9, fillColor:'#fff', fillOpacity:1, strokeColor:'#b8906a', strokeWeight:3 },
-    title: label || 'Search location'
-  });
-  _gymMarkers.push(centerMarker);
+  if (isUserLocation) {
+    /* GPS — show pulsing blue dot */
+    placeUserDot(lat, lng);
+  } else {
+    /* text search — amber pin at search centre */
+    var searchPin = new google.maps.Marker({
+      map: _gymMap, position: { lat: lat, lng: lng }, zIndex: 999, title: label,
+      icon: { path: google.maps.SymbolPath.CIRCLE, scale: 9,
+              fillColor:'#b8906a', fillOpacity:1, strokeColor:'#fff', strokeWeight:3 }
+    });
+    _gymMarkers.push(searchPin);
+    /* if we also have the real GPS, keep the blue dot visible */
+    if (_userLat !== null) placeUserDot(_userLat, _userLng);
+  }
 
-  _gymService.nearbySearch(
-    { location:{lat, lng}, radius:4828, type:'gym' },
-    (results, status) => {
-      if (status !== google.maps.places.PlacesServiceStatus.OK || !results.length) {
-        gymList.innerHTML = '<p style="color:var(--text-soft);font-size:13px;text-align:center;padding:16px;">No fitness venues found within 3 miles.</p>';
-        return;
-      }
-
-      const sorted = results
-        .map(p => ({ ...p, dist: calcMiles(lat, lng, p.geometry.location.lat(), p.geometry.location.lng()) }))
-        .filter(p => p.dist <= 3)
-        .sort((a,b) => a.dist - b.dist)
-        .slice(0, 8);
-
-      if (!sorted.length) {
-        gymList.innerHTML = '<p style="color:var(--text-soft);font-size:13px;text-align:center;padding:16px;">No fitness venues found within 3 miles.</p>';
-        return;
-      }
-
-      sorted.forEach(p => {
-        const m = new google.maps.Marker({
-          map: _gymMap, position: p.geometry.location, title: p.name,
-          icon:{path:google.maps.SymbolPath.CIRCLE,scale:8,fillColor:'#b8906a',fillOpacity:1,strokeColor:'#fff',strokeWeight:2}
+  searchAllFitnessVenues(lat, lng, function (rawResults) {
+    var sorted = rawResults
+      .map(function (p) {
+        return Object.assign({}, p, {
+          dist: calcMiles(lat, lng, p.geometry.location.lat(), p.geometry.location.lng())
         });
-        _gymMarkers.push(m);
-      });
+      })
+      .filter(function (p) { return p.dist <= 3; })
+      .sort(function (a, b) { return a.dist - b.dist; })
+      .slice(0, 12);
 
-      const items = sorted.map(p => ({ place:p, hours:null }));
-      let done = 0;
-
-      sorted.forEach((place, i) => {
-        _gymService.getDetails(
-          { placeId: place.place_id, fields: ['opening_hours','types'] },
-          (detail, s) => {
-            if (s === google.maps.places.PlacesServiceStatus.OK && detail) {
-              items[i].hours = detail.opening_hours;
-            }
-            done++;
-            if (done === sorted.length) renderGymList();
-          }
-        );
-      });
-
-      function renderGymList() {
-        gymList.innerHTML = items.map(({ place, hours }) => {
-          const isOpen    = hours?.isOpen?.() ?? null;
-          const openBadge = isOpen === null
-            ? `<span style="color:#c4b5a8;">Hours N/A</span>`
-            : isOpen
-              ? `<span style="color:#7aaa8a;font-weight:600;">● Open now</span>`
-              : `<span style="color:#c0716a;font-weight:600;">● Closed</span>`;
-          const dayIdx   = new Date().getDay();
-          const wdIdx    = dayIdx === 0 ? 6 : dayIdx - 1;
-          const todayTxt = hours?.weekday_text?.[wdIdx];
-          const hoursStr = todayTxt ? todayTxt.split(': ').slice(1).join(': ') || '' : '';
-          const type     = getFitnessType(place.name, place.types);
-          return `<div class="gym-item">
-            <div style="flex:1;">
-              <div class="gym-name">${place.name}</div>
-              <div class="gym-meta">
-                <span class="gym-type">${type}</span>
-                <span class="gym-dist">📍 ${place.dist.toFixed(1)} mi away</span>
-              </div>
-              <div class="gym-hours">${openBadge}${hoursStr ? ' · ' + hoursStr : ''}</div>
-            </div>
-          </div>`;
-        }).join('');
-      }
+    if (!sorted.length) {
+      gymList.innerHTML = '<p style="color:var(--text-soft);font-size:13px;text-align:center;padding:20px;">No fitness venues found within 3 miles. Try searching a different area.</p>';
+      return;
     }
-  );
+
+    /* place venue markers + info windows */
+    sorted.forEach(function (p) {
+      var ft     = getFitnessType(p.name, p.types);
+      var marker = new google.maps.Marker({
+        map: _gymMap, position: p.geometry.location, title: p.name,
+        icon: { path: google.maps.SymbolPath.CIRCLE, scale: 8,
+                fillColor:'#b8906a', fillOpacity:1, strokeColor:'#fff', strokeWeight:2 }
+      });
+      var iw = new google.maps.InfoWindow({
+        content: '<div style="font-family:Inter,sans-serif;padding:2px 4px;">' +
+                 '<b style="font-size:13px;">' + ft.emoji + ' ' + p.name + '</b><br>' +
+                 '<span style="font-size:12px;color:#6b5c54;">📍 ' + p.dist.toFixed(1) + ' mi away</span></div>'
+      });
+      marker.addListener('click', function () { iw.open(_gymMap, marker); });
+      _gymMarkers.push(marker);
+    });
+
+    /* fetch opening hours for each venue in parallel */
+    var items   = sorted.map(function (p) { return { place: p, detail: null }; });
+    var fetched = 0;
+
+    sorted.forEach(function (place, i) {
+      _gymService.getDetails(
+        { placeId: place.place_id, fields: ['opening_hours', 'types'] },
+        function (detail, s) {
+          if (s === google.maps.places.PlacesServiceStatus.OK && detail) items[i].detail = detail;
+          if (++fetched === sorted.length) renderGymList();
+        }
+      );
+    });
+
+    function renderGymList() {
+      var dayIdx = new Date().getDay();
+      var wdIdx  = dayIdx === 0 ? 6 : dayIdx - 1; /* Mon=0 in weekday_text */
+
+      gymList.innerHTML =
+        '<div class="gym-count-badge">' + sorted.length + ' venues found within 3 miles</div>' +
+        items.map(function (item) {
+          var place  = item.place;
+          var detail = item.detail;
+          var hours  = detail && detail.opening_hours;
+          var isOpen = hours && typeof hours.isOpen === 'function' ? hours.isOpen() : null;
+
+          var todayTxt = hours && hours.weekday_text && hours.weekday_text[wdIdx] ? hours.weekday_text[wdIdx] : '';
+          var hoursStr = todayTxt ? todayTxt.split(': ').slice(1).join(': ') : '';
+
+          var openBadge;
+          if (isOpen === null)  openBadge = '<span class="gym-hours-na">Hours unavailable</span>';
+          else if (isOpen)      openBadge = '<span class="gym-open">● Open now</span>';
+          else                  openBadge = '<span class="gym-closed">● Closed now</span>';
+
+          var ft = getFitnessType(place.name, (detail && detail.types) || place.types);
+
+          return '<div class="gym-item">' +
+                   '<div class="gym-icon-wrap">' + ft.emoji + '</div>' +
+                   '<div style="flex:1;min-width:0;">' +
+                     '<div class="gym-name">' + place.name + '</div>' +
+                     '<div class="gym-meta">' +
+                       '<span class="gym-type">' + ft.label + '</span>' +
+                       '<span class="gym-dist">📍 ' + place.dist.toFixed(1) + ' mi away</span>' +
+                     '</div>' +
+                     '<div class="gym-hours-row">' +
+                       openBadge +
+                       (hoursStr ? '<span class="gym-hours-text">· ' + hoursStr + '</span>' : '') +
+                     '</div>' +
+                   '</div>' +
+                 '</div>';
+        }).join('');
+    }
+  });
 }
 
+/* ─────────────────────────────────────────────────────────────
+   EMAIL
+───────────────────────────────────────────────────────────── */
 async function sendEmail(email, data) {
-  const btn = document.getElementById('calcBtn');
+  var btn = document.getElementById('calcBtn');
   btn.disabled = true;
   document.getElementById('btnText').innerHTML = '<span class="spinner"></span> Sending...';
   try {
@@ -790,7 +963,8 @@ async function sendEmail(email, data) {
       height    : data.heightDisplay,
       weight    : data.weightDisplay,
     });
-    showEmailBanner(email);
+    document.getElementById('emailBannerText').textContent = 'Your plan has been sent to ' + email;
+    document.getElementById('emailBanner').style.display = 'flex';
   } catch (err) {
     console.error(err);
     showToast('❌ Could not send email. Please try again.');
@@ -800,16 +974,11 @@ async function sendEmail(email, data) {
   }
 }
 
-function showEmailBanner(email) {
-  document.getElementById('emailBannerText').textContent = `Your plan has been sent to ${email}`;
-  document.getElementById('emailBanner').style.display = 'flex';
-}
-
 function showToast(msg) {
-  const t = document.getElementById('toast');
+  var t = document.getElementById('toast');
   t.textContent = msg;
   t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 3000);
+  setTimeout(function () { t.classList.remove('show'); }, 3000);
 }
 </script>
 </body>
