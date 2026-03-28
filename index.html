@@ -388,7 +388,7 @@
         <div class="card-icon">🏋️</div>
         <div>
           <div class="card-title">Fitness Venues Near You</div>
-          <div class="card-subtitle">Gyms, F45, CrossFit, Pilates and more · within 3 miles</div>
+          <div class="card-subtitle">Gyms, F45, CrossFit, Pilates and more · within 5 km</div>
         </div>
       </div>
 
@@ -568,9 +568,9 @@ var _userMarker  = null; // blue dot for GPS position
 var _userLat     = null;
 var _userLng     = null;
 
-/* Haversine */
-function calcMiles(lat1, lng1, lat2, lng2) {
-  var R    = 3958.8;
+/* Haversine — returns km */
+function calcKm(lat1, lng1, lat2, lng2) {
+  var R    = 6371;
   var dLat = (lat2-lat1)*Math.PI/180;
   var dLng = (lng2-lng1)*Math.PI/180;
   var a    = Math.sin(dLat/2)*Math.sin(dLat/2) +
@@ -757,40 +757,19 @@ function _geocodeAndSearch(address) {
 }
 
 /* ─────────────────────────────────────────────────────────────
-   MULTI-TYPE FITNESS SEARCH
-   Google Places only accepts ONE type per call — we fire 8 in
-   parallel and deduplicate by place_id.
+   FITNESS SEARCH — single reliable Places nearbySearch
 ───────────────────────────────────────────────────────────── */
-var FITNESS_QUERIES = [
-  { type: 'gym' },
-  { keyword: 'crossfit' },
-  { keyword: 'f45 training' },
-  { keyword: 'pilates studio' },
-  { keyword: 'yoga studio' },
-  { keyword: 'boxing gym' },
-  { keyword: 'spin cycling class' },
-  { keyword: 'barre fitness' },
-];
-
 function searchAllFitnessVenues(lat, lng, onDone) {
-  var seen    = {};
-  var results = [];
-  var pending = FITNESS_QUERIES.length;
-
-  FITNESS_QUERIES.forEach(function (params) {
-    var req = { location: { lat: lat, lng: lng }, radius: 4828 };
-    if (params.type)    req.type    = params.type;
-    if (params.keyword) req.keyword = params.keyword;
-
-    _gymService.nearbySearch(req, function (res, status) {
-      if (status === google.maps.places.PlacesServiceStatus.OK && res) {
-        res.forEach(function (r) {
-          if (!seen[r.place_id]) { seen[r.place_id] = true; results.push(r); }
-        });
+  _gymService.nearbySearch(
+    { location: { lat: lat, lng: lng }, radius: 5000, type: 'gym' },
+    function (results, status) {
+      if (status === google.maps.places.PlacesServiceStatus.OK && results) {
+        onDone(results);
+      } else {
+        onDone([]);
       }
-      if (--pending === 0) onDone(results);
-    });
-  });
+    }
+  );
 }
 
 /* ─────────────────────────────────────────────────────────────
@@ -858,15 +837,15 @@ function doSearchAt(lat, lng, label, isUserLocation) {
     var sorted = rawResults
       .map(function (p) {
         return Object.assign({}, p, {
-          dist: calcMiles(lat, lng, p.geometry.location.lat(), p.geometry.location.lng())
+          dist: calcKm(lat, lng, p.geometry.location.lat(), p.geometry.location.lng())
         });
       })
-      .filter(function (p) { return p.dist <= 3; })
+      .filter(function (p) { return p.dist <= 5; })
       .sort(function (a, b) { return a.dist - b.dist; })
       .slice(0, 12);
 
     if (!sorted.length) {
-      gymList.innerHTML = '<p style="color:var(--text-soft);font-size:13px;text-align:center;padding:20px;">No fitness venues found within 3 miles. Try searching a different area.</p>';
+      gymList.innerHTML = '<p style="color:var(--text-soft);font-size:13px;text-align:center;padding:20px;">No fitness venues found within 5 km. Try searching a different area.</p>';
       return;
     }
 
@@ -881,7 +860,7 @@ function doSearchAt(lat, lng, label, isUserLocation) {
       var iw = new google.maps.InfoWindow({
         content: '<div style="font-family:Inter,sans-serif;padding:2px 4px;">' +
                  '<b style="font-size:13px;">' + ft.emoji + ' ' + p.name + '</b><br>' +
-                 '<span style="font-size:12px;color:#6b5c54;">📍 ' + p.dist.toFixed(1) + ' mi away</span></div>'
+                 '<span style="font-size:12px;color:#6b5c54;">📍 ' + p.dist.toFixed(1) + ' km away</span></div>'
       });
       marker.addListener('click', function () { iw.open(_gymMap, marker); });
       _gymMarkers.push(marker);
@@ -906,7 +885,7 @@ function doSearchAt(lat, lng, label, isUserLocation) {
       var wdIdx  = dayIdx === 0 ? 6 : dayIdx - 1; /* Mon=0 in weekday_text */
 
       gymList.innerHTML =
-        '<div class="gym-count-badge">' + sorted.length + ' venues found within 3 miles</div>' +
+        '<div class="gym-count-badge">' + sorted.length + ' venues found within 5 km</div>' +
         items.map(function (item) {
           var place  = item.place;
           var detail = item.detail;
@@ -929,7 +908,7 @@ function doSearchAt(lat, lng, label, isUserLocation) {
                      '<div class="gym-name">' + place.name + '</div>' +
                      '<div class="gym-meta">' +
                        '<span class="gym-type">' + ft.label + '</span>' +
-                       '<span class="gym-dist">📍 ' + place.dist.toFixed(1) + ' mi away</span>' +
+                       '<span class="gym-dist">📍 ' + place.dist.toFixed(1) + ' km away</span>' +
                      '</div>' +
                      '<div class="gym-hours-row">' +
                        openBadge +
