@@ -388,7 +388,7 @@
         <div class="card-icon">🏋️</div>
         <div>
           <div class="card-title">Fitness Venues Near You</div>
-          <div class="card-subtitle">Gyms, F45, CrossFit, Pilates and more · within 5 km</div>
+          <div class="card-subtitle">Gyms, F45, CrossFit, Pilates and more · within 3 miles</div>
         </div>
       </div>
 
@@ -740,17 +740,22 @@ function searchLocation() {
   _geocodeAndSearch(input);
 }
 
-function _geocodeAndSearch(address) {
+async function _geocodeAndSearch(address) {
   showToast('🔍 Searching…');
-  var geocoder = new google.maps.Geocoder();
-  geocoder.geocode({ address: address }, function (results, status) {
-    if (status === 'OK' && results[0]) {
-      var loc = results[0].geometry.location;
-      doSearchAt(loc.lat(), loc.lng(), results[0].formatted_address, false);
+  try {
+    var geoLib  = await google.maps.importLibrary('geocoding');
+    var geocoder = new geoLib.Geocoder();
+    var result   = await geocoder.geocode({ address: address });
+    if (result.results && result.results[0]) {
+      var loc = result.results[0].geometry.location;
+      doSearchAt(loc.lat(), loc.lng(), result.results[0].formatted_address, false);
     } else {
       showToast('⚠️ Location not found. Try a more specific address.');
     }
-  });
+  } catch (err) {
+    console.error('Geocode error:', err);
+    showToast('⚠️ Location not found. Try a more specific address.');
+  }
 }
 
 /* ─────────────────────────────────────────────────────────────
@@ -839,14 +844,14 @@ async function doSearchAt(lat, lng, label, isUserLocation) {
     if (!p.location) return;
     var plLat = typeof p.location.lat === 'function' ? p.location.lat() : p.location.lat;
     var plLng = typeof p.location.lng === 'function' ? p.location.lng() : p.location.lng;
-    var d = calcKm(lat, lng, plLat, plLng);
-    if (d <= 5) withDist.push({ place: p, dist: d });
+    var d = calcKm(lat, lng, plLat, plLng) * 0.621371;
+    if (d <= 3.1) withDist.push({ place: p, dist: d });
   });
   withDist.sort(function (a, b) { return a.dist - b.dist; });
   withDist = withDist.slice(0, 12);
 
   if (!withDist.length) {
-    gymList.innerHTML = '<p style="color:var(--text-soft);font-size:13px;text-align:center;padding:20px;">No fitness venues found within 5 km. Try searching a different area.</p>';
+    gymList.innerHTML = '<p style="color:var(--text-soft);font-size:13px;text-align:center;padding:20px;">No fitness venues found within 3 miles. Try searching a different area.</p>';
     return;
   }
 
@@ -862,7 +867,7 @@ async function doSearchAt(lat, lng, label, isUserLocation) {
     var iw = new google.maps.InfoWindow({
       content: '<div style="font-family:Inter,sans-serif;padding:2px 4px;">' +
                '<b style="font-size:13px;">' + ft.emoji + ' ' + p.displayName + '</b><br>' +
-               '<span style="font-size:12px;color:#6b5c54;">📍 ' + item.dist.toFixed(1) + ' km away</span></div>'
+               '<span style="font-size:12px;color:#6b5c54;">📍 ' + item.dist.toFixed(1) + ' mi away</span></div>'
     });
     marker.addListener('click', function () { iw.open(_gymMap, marker); });
     _gymMarkers.push(marker);
@@ -873,7 +878,7 @@ async function doSearchAt(lat, lng, label, isUserLocation) {
   var wdIdx  = dayIdx === 0 ? 6 : dayIdx - 1;
 
   gymList.innerHTML =
-    '<div class="gym-count-badge">' + withDist.length + ' venues found within 5 km</div>' +
+    '<div class="gym-count-badge">' + withDist.length + ' venues found within 3 miles</div>' +
     withDist.map(function (item) {
       var p     = item.place;
       var hours = p.currentOpeningHours || p.regularOpeningHours || null;
@@ -890,17 +895,21 @@ async function doSearchAt(lat, lng, label, isUserLocation) {
 
       var ft = getFitnessType(p.displayName, p.types);
 
+      var mapsUrl = 'https://www.google.com/maps/place/?q=place_id:' + p.id;
       return '<div class="gym-item">' +
                '<div class="gym-icon-wrap">' + ft.emoji + '</div>' +
                '<div style="flex:1;min-width:0;">' +
                  '<div class="gym-name">' + p.displayName + '</div>' +
                  '<div class="gym-meta">' +
                    '<span class="gym-type">' + ft.label + '</span>' +
-                   '<span class="gym-dist">📍 ' + item.dist.toFixed(1) + ' km away</span>' +
+                   '<span class="gym-dist">📍 ' + item.dist.toFixed(1) + ' mi away</span>' +
                  '</div>' +
                  '<div class="gym-hours-row">' +
                    openBadge +
                    (hoursStr ? '<span class="gym-hours-text">· ' + hoursStr + '</span>' : '') +
+                 '</div>' +
+                 '<div style="margin-top:8px;">' +
+                   '<a href="' + mapsUrl + '" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;color:#fff;background:#4285f4;padding:5px 12px;border-radius:100px;text-decoration:none;">🗺️ Open in Google Maps</a>' +
                  '</div>' +
                '</div>' +
              '</div>';
