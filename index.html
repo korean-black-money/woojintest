@@ -932,8 +932,8 @@ function doSearchAt(lat, lng, label, isUserLocation) {
 
           var ft = getFitnessType(place.name, (detail && detail.types) || place.types);
 
-          var addr   = (detail && detail.formatted_address) || '';
-          var mapsUrl = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(place.name + (addr ? ' ' + addr : ''));
+          /* Use place_id for the most accurate Maps deep-link */
+          var mapsUrl = 'https://www.google.com/maps/place/?q=place_id:' + place.place_id;
 
           return '<div class="gym-item">' +
                    '<div class="gym-icon-wrap">' + ft.emoji + '</div>' +
@@ -947,7 +947,7 @@ function doSearchAt(lat, lng, label, isUserLocation) {
                        openBadge +
                        (hoursStr ? '<span class="gym-hours-text">· ' + hoursStr + '</span>' : '') +
                      '</div>' +
-                     '<a href="' + mapsUrl + '" target="_blank" rel="noopener" class="gym-maps-btn">🗺 Open in Maps</a>' +
+                     '<a href="' + mapsUrl + '" target="_blank" rel="noopener" class="gym-maps-btn">🗺 Open in Google Maps</a>' +
                    '</div>' +
                  '</div>';
         }).join('');
