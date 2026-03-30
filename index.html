@@ -1013,6 +1013,47 @@
       </script>
     </div>
 
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon">🏋️</div>
+        <div>
+          <div class="card-title">Fitness Venues Near You</div>
+          <div class="card-subtitle">Auto-detects your location or searches any area · within 3 miles</div>
+        </div>
+      </div>
+
+      <div class="location-banner" id="locationBanner">
+        <div class="loc-icon">📍</div>
+        <div>
+          <strong id="locationBannerTitle">Finding fitness venues near you...</strong>
+          <p id="locationBannerMsg">Allow location access in the browser prompt to see nearby gyms</p>
+        </div>
+      </div>
+
+      <div class="gym-search-row">
+        <input
+          type="text"
+          id="gymSearchInput"
+          placeholder="Search any location (e.g. Whitechapel, London)"
+          onkeydown="if(event.key==='Enter'){event.preventDefault();searchLocation();}"
+        />
+        <button type="button" class="btn-gym-search" onclick="searchLocation()">🔍 Search</button>
+      </div>
+
+      <div id="gymStatus" class="gym-status">
+        <strong id="gymStatusTitle"></strong>
+        <p id="gymStatusText"></p>
+      </div>
+
+      <div id="gymPlaceholder" class="gym-placeholder" style="display:none;">
+        <p>📍 Allow location access or search a city above to find fitness venues within 3 miles</p>
+        <button type="button" class="btn-location" onclick="requestLocation()">📍 Try Again</button>
+      </div>
+
+      <div id="map"></div>
+      <div id="gymList" class="gym-list"></div>
+    </div>
+
     <div id="resultsSection">
       <div class="email-banner" id="emailBanner">
         <div class="check-circle">✓</div>
@@ -1072,47 +1113,6 @@
           </div>
         </div>
         <div class="food-grid" id="foodGrid"></div>
-      </div>
-
-      <div class="card">
-        <div class="card-header">
-          <div class="card-icon">🏋️</div>
-          <div>
-            <div class="card-title">Fitness Venues Near You</div>
-            <div class="card-subtitle">Gyms, F45, CrossFit, Pilates and more · within 3 miles</div>
-          </div>
-        </div>
-
-        <div class="location-banner" id="locationBanner">
-          <div class="loc-icon">📍</div>
-          <div>
-            <strong id="locationBannerTitle">Finding fitness venues near you...</strong>
-            <p id="locationBannerMsg">Allow location access in the browser prompt to see nearby gyms</p>
-          </div>
-        </div>
-
-        <div class="gym-search-row">
-          <input
-            type="text"
-            id="gymSearchInput"
-            placeholder="Search any location (e.g. Whitechapel, London)"
-            onkeydown="if(event.key==='Enter'){event.preventDefault();searchLocation();}"
-          />
-          <button type="button" class="btn-gym-search" onclick="searchLocation()">🔍 Search</button>
-        </div>
-
-        <div id="gymStatus" class="gym-status">
-          <strong id="gymStatusTitle"></strong>
-          <p id="gymStatusText"></p>
-        </div>
-
-        <div id="gymPlaceholder" class="gym-placeholder" style="display:none;">
-          <p>📍 Allow location access or search a city above to find fitness venues within 3 miles</p>
-          <button type="button" class="btn-location" onclick="requestLocation()">📍 Try Again</button>
-        </div>
-
-        <div id="map"></div>
-        <div id="gymList" class="gym-list"></div>
       </div>
 
       <div class="product-cta">
@@ -1296,7 +1296,6 @@
       renderFoodRecs(goal);
 
       document.getElementById('resultsSection').style.display = 'block';
-      setGymStatus('Preparing map', 'We will mark your current location automatically or use the place you search for.');
 
       setTimeout(() => {
         document.getElementById('resultsSection').scrollIntoView({
@@ -1304,9 +1303,6 @@
           block: 'start'
         });
       }, 60);
-
-      _bootstrapMaps();
-      autoDetectLocation();
 
       if (email) {
         sendEmail(email, {
@@ -1333,6 +1329,9 @@
     var _searchLat = null;
     var _searchLng = null;
     var _searchLabel = '';
+    var _activeGymSearchToken = 0;
+    var _fitnessSectionReady = false;
+    var _manualSearchActive = false;
 
     function calcMiles(lat1, lng1, lat2, lng2) {
       var R = 3958.8;
@@ -1389,6 +1388,15 @@
       };
 
       document.head.appendChild(s);
+    }
+
+    function initFitnessVenueSection() {
+      if (_fitnessSectionReady) return;
+
+      _fitnessSectionReady = true;
+      setGymStatus('Preparing map', 'We will mark your current location automatically or use the place you search for.');
+      _bootstrapMaps();
+      autoDetectLocation();
     }
 
     window.initMap = function () {
@@ -1475,6 +1483,15 @@
           _userLat = pos.coords.latitude;
           _userLng = pos.coords.longitude;
 
+          if (_manualSearchActive) {
+            document.getElementById('locationBanner').style.display = 'none';
+            document.getElementById('gymPlaceholder').style.display = 'none';
+            if (window._gymMapsLoaded && _gymMap) {
+              placeUserDot(_userLat, _userLng);
+            }
+            return;
+          }
+
           document.getElementById('locationBanner').style.display = 'none';
           document.getElementById('gymPlaceholder').style.display = 'none';
           setGymStatus('Current location detected', 'Showing venues within ' + SEARCH_RADIUS_MILES + ' miles of your live location.');
@@ -1501,6 +1518,8 @@
     }
 
     function requestLocation() {
+      _manualSearchActive = false;
+
       if (!navigator.geolocation) {
         showToast('Geolocation not supported');
         setGymStatus('Location not supported', 'This browser cannot share your position, so search for a place manually.');
@@ -1551,6 +1570,7 @@
         return;
       }
 
+      _manualSearchActive = true;
       document.getElementById('locationBanner').style.display = 'none';
       document.getElementById('gymPlaceholder').style.display = 'none';
       setGymStatus('Searching location', 'Moving the map to "' + input + '" and looking for venues within ' + SEARCH_RADIUS_MILES + ' miles.');
@@ -1576,6 +1596,7 @@
           _searchLat = loc.lat();
           _searchLng = loc.lng();
           _searchLabel = results[0].formatted_address;
+          document.getElementById('gymSearchInput').value = _searchLabel;
 
           doSearchAt(_searchLat, _searchLng, _searchLabel, false);
         } else {
@@ -1654,10 +1675,12 @@
     function doSearchAt(lat, lng, label, isUserLocation) {
       var mapEl = document.getElementById('map');
       var gymList = document.getElementById('gymList');
+      var searchToken = ++_activeGymSearchToken;
 
       _searchLat = lat;
       _searchLng = lng;
       _searchLabel = label;
+      _manualSearchActive = !isUserLocation;
 
       document.getElementById('gymPlaceholder').style.display = 'none';
       document.getElementById('locationBanner').style.display = 'none';
@@ -1705,6 +1728,8 @@
       }
 
       searchAllFitnessVenues(lat, lng, function (rawResults) {
+        if (searchToken !== _activeGymSearchToken) return;
+
         var sorted = rawResults
           .map(function (p) {
             return Object.assign({}, p, {
@@ -1779,6 +1804,7 @@
               fields: ['name', 'opening_hours', 'current_opening_hours', 'types', 'formatted_address']
             },
             function (detail, status) {
+              if (searchToken !== _activeGymSearchToken) return;
               if (status === google.maps.places.PlacesServiceStatus.OK && detail) {
                 items[i].detail = detail;
               }
@@ -1827,7 +1853,7 @@
                     '</div>' +
                     '<div class="gym-hours-row">' +
                       openBadge +
-                      (hoursStr ? '<span class="gym-hours-text">· ' + escapeHtml(hoursStr) + '</span>' : '') +
+                      (hoursStr ? '<span class="gym-hours-text">· Today: ' + escapeHtml(hoursStr) + '</span>' : '') +
                     '</div>' +
                     '<a href="' + mapsUrl + '" target="_blank" rel="noopener" class="gym-maps-btn">🗺 Open in Google Maps</a>' +
                   '</div>' +
@@ -1884,6 +1910,8 @@
         t.classList.remove('show');
       }, 3000);
     }
+
+    initFitnessVenueSection();
   </script>
 </body>
 </html>
